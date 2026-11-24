@@ -1,0 +1,204 @@
+{
+  "id": "advent",
+  "name": "Advent",
+  "version": "1.0.0",
+  "description": "A fun Christmas countdown with a full celebration on Dec 25. Nothing to configure, just add and enable.",
+  "author": "Adam Selby",
+  "repository": "https://github.com/adamselby/fiestaboard-plugin--advent",
+  "documentation": "README.md",
+  "icon": "tree",
+  "category": "utility",
+  "supports_triggers": true,
+  "min_refresh_seconds": 60,
+  "settings_schema": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "title": "Enabled",
+        "default": false
+      },
+      "timezone": {
+        "type": "string",
+        "title": "Timezone",
+        "description": "Decides when \"today\" starts and ends.",
+        "default": "America/Chicago",
+        "ui:widget": "timezone"
+      },
+      "announce": {
+        "type": "boolean",
+        "title": "Take Over the Board",
+        "description": "Interrupt your normal pages to show the countdown or Christmas celebration, then hand the board back.",
+        "default": true
+      },
+      "announce_mode": {
+        "type": "string",
+        "title": "Takeover Style",
+        "description": "Four times a day, once a day, or the first few minutes of every hour. On Dec 25, the board is taken over all day regardless of this setting.",
+        "enum": [
+          "quad",
+          "daily",
+          "hourly"
+        ],
+        "enumNames": [
+          "Four times a day",
+          "Once a day",
+          "Start of every hour"
+        ],
+        "default": "quad"
+      },
+      "announce_hour": {
+        "type": "integer",
+        "title": "Start Hour",
+        "description": "0-23, local time. Once a day: when it starts. Every hour: the first hour it runs. Not used in four-times-a-day mode.",
+        "default": 8,
+        "minimum": 0,
+        "maximum": 23
+      },
+      "announce_end_hour": {
+        "type": "integer",
+        "title": "End Hour (every-hour style)",
+        "description": "0-24. The takeover doesn't start in this hour or later.",
+        "default": 22,
+        "minimum": 1,
+        "maximum": 24
+      },
+      "announce_minutes": {
+        "type": "integer",
+        "title": "Takeover Length (minutes)",
+        "description": "Once a day: up to 1440. Every hour: capped at 60.",
+        "default": 30,
+        "minimum": 1,
+        "maximum": 1440
+      },
+      "takeover_priority": {
+        "type": "integer",
+        "title": "Takeover Priority",
+        "description": "When two takeovers overlap, the higher number wins. Defaults to 50, which beats the Holidays plugin (40) on Dec 24\u201325.",
+        "default": 50,
+        "minimum": 1,
+        "maximum": 99
+      },
+      "refresh_seconds": {
+        "type": "integer",
+        "title": "Refresh Interval (seconds)",
+        "description": "How often to recompute (and reshuffle Christmas confetti). The date rolls over within this long of midnight.",
+        "default": 300,
+        "minimum": 60,
+        "maximum": 3600
+      }
+    }
+  },
+  "variables": {
+    "groups": {
+      "advent": {
+        "label": "Advent"
+      }
+    },
+    "simple": {
+      "is_active": {
+        "description": "\"true\" Dec 1\u201325, \"false\" the rest of the year",
+        "group": "advent",
+        "max_length": 5,
+        "example": "true"
+      },
+      "is_christmas": {
+        "description": "\"true\" on Dec 25 only",
+        "group": "advent",
+        "max_length": 5,
+        "example": "false"
+      },
+      "days": {
+        "description": "Days until Christmas (0 on Dec 25, empty outside Dec 1\u201325)",
+        "group": "advent",
+        "max_length": 2,
+        "example": "12",
+        "type": "number"
+      },
+      "message": {
+        "description": "Empty Dec 1\u201323 (grid display). IT'S CHRISTMAS EVE on Dec 24. MERRY CHRISTMAS! on Dec 25.",
+        "group": "advent",
+        "max_length": 20,
+        "example": "MERRY CHRISTMAS!"
+      },
+      "confetti": {
+        "description": "22 red/green/white tiles, reshuffled every refresh. Use LEFT(advent.confetti, n * 4) for fewer tiles.",
+        "group": "advent",
+        "max_length": 22,
+        "example": "{63}{66}{69}{63}{66}{69}"
+      }
+    }
+  },
+  "demo": {
+    "name": "Advent Demo",
+    "device_type": "flagship",
+    "template": [
+      "",
+      "{{= IF(advent.is_christmas = \"true\", \"MERRY CHRISTMAS!\", \"CHRISTMAS\") }}",
+      "",
+      "{{= IF(advent.is_christmas = \"true\", \"\", \"DEC 25\") }}",
+      "{{= IF(advent.is_christmas = \"true\", \"\", advent.days & \" DAYS\") }}",
+      ""
+    ],
+    "line_metadata": [
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      }
+    ]
+  },
+  "teaser": "MERRY CHRISTMAS",
+  "previews": [
+    {
+      "device_type": "flagship",
+      "rows": [
+        "",
+        "        CHRISTMAS",
+        "",
+        "          DEC 25",
+        "         12 DAYS",
+        ""
+      ]
+    },
+    {
+      "device_type": "flagship",
+      "label": "Dec 25",
+      "rows": [
+        "{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}",
+        "",
+        "    MERRY CHRISTMAS!",
+        "",
+        "",
+        "{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}{69}{63}{66}"
+      ]
+    },
+    {
+      "device_type": "note",
+      "rows": [
+        "   CHRISTMAS",
+        "    DEC 25",
+        "    12 DAYS"
+      ]
+    }
+  ]
+}
